@@ -5,40 +5,19 @@
 
     <div class="container">
       <div class="page-title">Welcome to Opportunity</div>
-      <div class="page-date">08.08.2021</div>
+      <div class="page-date">{{currentDateTime()}}</div>
 
       <ul class="sections-container">
-        <li class="section">
-          <div class="section-time">14.00 Uhr</div>
-
-          <div class="section-title">Basisbeschäftigung Besuch</div>
-
-          <div class="section-body">
-            Interessierte für den zweiten Kurs werden uns besuchen
-          </div>
+        <li class="section"
+         v-for="entry in entries"
+        :key="entry.id"
+      >
+        <span>{{entry[0]}}</span><br />
+        <h3>{{entry[2]}}</h3>
+        <span>{{entry[3]}}</span><br />    
+               
         </li>
-
-        <li class="section">
-          <div class="section-time">14.00 Uhr</div>
-          <div class="section-title">Basisbeschäftigung Besuch</div>
-          <div class="section-body">
-            Interessierte für den zweiten Kurs werden uns besuchen
-          </div>
-        </li>
-
-        <li class="section">
-          <div class="section-time">14.00 Uhr</div>
-          <div class="section-title">Basisbeschäftigung Besuch</div>
-
-          <div class="section-body">
-            Interessierte für den zweiten Kurs werden uns besuchen
-          </div>
-        </li>
-
-        
-
-
-      </ul>
+       </ul>
     </div>
     <footer>
       <img
@@ -53,30 +32,56 @@
 </template>
 
 <script>
+import axios from "axios"; 
 
 export default {
   name: "App",
-  date() {
+  data() {
     return {
       title: "Welcome to Opportunity",
+      sheet_id: "1a81aI0Y8ViZO0tI92h2YSMqVQJ8hmNNMyMylXgvwiU4",
+      api_token: "AIzaSyA-qeDXOhEeQDA0vQf7LgkF7DQtGnAtmAU",
+      entries:[],
+      dateTime: "",
     };
   },
-  components: {},
+  computed: {
+    gsheet_url(){
+      return `https://sheets.googleapis.com/v4/spreadsheets/${this.sheet_id}/values:batchGet?ranges=A2%3AE100&valueRenderOption=FORMATTED_VALUE&key=${this.api_token}`
+    }},
   methods: {
-    date_function: function () {
-      var currentDate = new Date();
-      console.log(currentDate);
-      var formatted_date = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
-      console.log(formatted_date);
+    // <!--date_function: function () {
+    //   var currentDate = new Date();
+    //   console.log(currentDate);
+    //   var formatted_date = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
+    //   console.log(formatted_date);
+    // },
+    currentDateTime() {
+      const current = new Date();
+      const day = current.getDate();
+      const month = (current.getMonth()+1);
+      const year = current.getFullYear();
+
+      const dateTime = day + '.' + month  + '.' + year;
+
+      if (month<10){
+        return day + '.' + '0' + month  + '.' + year;
+      }
+      return dateTime;
+    },
+
+     getData(){
+      axios.get(this.gsheet_url).then((response) => {
+        this.entries = response.data.valueRanges[0].values;
+      });
     },
   },
-  mounted() {
-    this.date_function();
+    mounted() {
+    this.getData();
   },
-};
+    
+}
 </script>
-
-
 
 <style>
 @media screen and (max-width: 600px) {
@@ -123,14 +128,7 @@ body {
   flex-direction: column;
   /* align-content: center; */
 }
-/*main {
-  align-self: center;
-  display: flex;
-  background: #e5e5e5;
-  width: 60%;
-  flex-direction: column;
-      
-}*/
+
 .container {
   margin: 60px;
 }
