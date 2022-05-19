@@ -7,23 +7,22 @@
       <div class="page-title">Welcome to Opportunity</div>
       <div class="page-date">{{ currentDateTime() }}</div>
 
-      <ul v-if="entries" class="sections-container" >
+      <ul v-if="entries" class="sections-container">
         <li class="section" v-for="entry in entries" :key="entry.id">
-          <span class="section-time">{{ entry[0] }}, {{ entry[1].replaceAll("/", ".") }}</span
+          <span class="section-time"
+            >{{ entry[0] }}, {{ entry[1].replaceAll("/", ".") }}</span
           ><br />
-          <h3 class="section-title">{{ entry [2]}}</h3>
-          <span class="section-body">{{ entry [3]}}</span
+          <h3 class="section-title">{{ entry[2] }}</h3>
+          <span class="section-body">{{ entry[3] }}</span
           ><br />
 
           <span></span>
         </li>
       </ul>
 
-    <div v-else class="notWorking"> 
-      <p> This is not working, please try again later </p>
-
-    </div>
-
+      <div v-else class="notWorking">
+        <p>This is not working, please try again later</p>
+      </div>
     </div>
     <footer>
       <img
@@ -47,7 +46,7 @@ export default {
       title: "Welcome to Opportunity",
       sheet_id: "1a81aI0Y8ViZO0tI92h2YSMqVQJ8hmNNMyMylXgvwiU4",
       api_token: "AIzaSyA-qeDXOhEeQDA0vQf7LgkF7DQtGnAtmAU",
-      // entries: [],
+      entries: [],
       dateTime: "",
     };
   },
@@ -63,13 +62,6 @@ export default {
     //   var formatted_date = new Date().toJSON().slice(0, 10).replace(/-/g, "/");
     //   console.log(formatted_date);
     // },
-    refreshData(){
-      this.currentDateTime();
-      this.getData();
-      
-
-    },
-
 
     currentDateTime() {
       const current = new Date();
@@ -90,7 +82,13 @@ export default {
         this.entries = response.data.valueRanges[0].values;
       });
     },
+
+    refreshData() {
+      this.currentDateTime();
+      this.getData();
+    },
   },
+  
   mounted() {
     this.refreshData();
     setInterval(this.refreshData, 1000 * 60 * 30);
